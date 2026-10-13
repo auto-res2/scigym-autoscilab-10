@@ -1,0 +1,23 @@
+{
+  "dirs": {
+    "autoscilab-luna": {
+      "execution_id": "e666c5c7-3f13-4454-bf42-2d8541854088",
+      "backend": "seyval",
+      "commit_hash": "9f525d4275a67b73a578fe84fe0221863195b731",
+      "overrides": {
+        "airas_secret_names": "ANTHROPIC_API_KEY,AWS_ACCESS_KEY_ID,AWS_BEARER_TOKEN_BEDROCK,AWS_SECRET_ACCESS_KEY,GEMINI_API_KEY,GH_PERSONAL_ACCESS_TOKEN,HF_TOKEN,NVIDIA_API_KEY,OPENAI_API_KEY,RIKYU_API_KEY,SEYVAL_API_KEY,VERCEL_AI_GATEWAY_API_KEY,WANDB_API_KEY",
+        "run_id": "autoscilab-luna",
+        "mode": "full"
+      },
+      "parameters": {},
+      "files": {
+        ".research/results/autoscilab-luna/eval_inputs/scigym_small.json.gz": "e4ca2284aaeb1abce4a2e44311f96ddaa6098a24fba61fe36ef13c2e3eb351de",
+        ".research/results/autoscilab-luna/evaluation/scigym_small.json": "591200e40fb98641175fa98bed7ba21fcb6b5db36e8ed0af9043fe81217149d1",
+        ".research/results/autoscilab-luna/instances.tar.gz": "89053e11b6e2cf25044f2bdd9f7d7ee799ae4196c3b78ac50a90ee816a2297b8",
+        ".research/results/autoscilab-luna/metrics.json": "2e394c7d2ab188156ff9969ba924847d0596ae685af5936a4ed0cd5befcbcf4c",
+        ".research/results/autoscilab-luna/observed.json": "4c56e6881e9f4c8395bf2cfb588d8bb30c0bf4f2bb95731345b4b1be42e3f3b8",
+        ".research/results/autoscilab-luna/tokens.json": "896bec49692a38c993a355957e879adf4458a93730690f910dae5be0e3236e99"
+      }
+    }
+  }
+}
