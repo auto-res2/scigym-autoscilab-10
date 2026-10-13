@@ -276,7 +276,7 @@
         "knob の一覧（design の arguments）は、コードから列挙できた範囲を超えて完全である（c1, c2, c3）",
         "Vercel AI Gateway が返すモデル（openai/gpt-6-luna、meta/llama-3.1-8b）はその名前のモデルである（c1, c2, c3）",
         "LLM のサンプリングは非決定的であり、1 回の run の差は再現時にずれうる（c1, c2, c3）",
-        "GitHub Actions の実行記録と git 履歴は正しい（c1, c2, c3）",
+        "Seyval（RIKYU の BYO Slurm）の実行記録と git 履歴は正しい（c1, c2, c3）",
         "ReAct の max_iterations=20 と AutoSciLab のオラクル問い合わせ 20 回を同じ実験予算とみなす（ReAct の反復にはコード実行だけの反復も含まれるので、ReAct の実験回数は 20 以下になる）（c1, c3）",
         "Antimony と SBML の相互変換（tellurium / libantimony）が機構を変えない。Antimony は速度則に現れる非反応物の種を自動で修飾子にする（c1, c2, c3）",
         "10 件は 137 件の代表であり、10 件での差が母集団の差を反映する（c1, c2, c3）"
@@ -787,7 +787,7 @@
         "前研究との関係: auto-res2/scigym-autoscilab（2026-10-07、137 件）と auto-res2/scigym-autoscilab-v3（2026-10-09、同じコード + review の指摘 3 点、137 件）は、速度則を 3 型に固定した自前のループ（約 850 行、上流から呼ぶのは FalsificationSelector / LLMClient / EnsembleClient / BaseOracle のみ）で検証し、c1 反証（+0.098 / +0.094）、c2 反証（+0.005）、c3 支持（−0.061 / −0.112）だった。事後分析では、フィット誤差と構造の正しさがほぼ無相関、134 件中 43 件がフィット誤差 1 超で、速度則の文法が主因と判断した。本研究はコードを書き直し、(1) 上流モジュールをそのまま使い、合わない所だけサブクラスで最小の変更にとどめ、(2) 速度則を LLM に自由に書かせ（Antimony）、(3) 自前の段階ごとに「検討した上流の関数と使えない理由」を design に書く。件数は 10 で、判定の統計的な力は弱い（下の「マージンと予測区間」）。",
         "手法の段階と上流の対応（要約。詳細は d1 の summary）: そのまま = EnsembleClient, LLMClient, EnsembleAgent.run_round / synthesize_proposal, HypothesisDistribution（骨格・クラスタ・エントロピー）, FalsificationSelector.select, ExperimentStore, OracleResult, LLMMemory, _JsonWorker。サブクラスで一部上書き = EnsembleAgent（sample_hypothesis_distribution, _sample_adaptive: Python 式の選別とスキーマ → Antimony）, HypothesisDistribution（compute_disagreement: 軌道）, ExperimentStore（to_text_table, summary）, OracleResult（軌道の場）, BaseOracle（run → SciGym、parameter_* と param_description）, _JsonWorker（request に時間切れ、close で stdin を閉じて待つ）。自前 = canonical 化、Antimony ↔ SBML の呼び出し、定数フィット、確信度の式、Refine のスコア、ループ、worker スクリプト。自前にした段階ごとの「検討した上流と使えない理由」は d1 に書いた。sanity 後に observed.json と src/ の行数で実測を書く。",
         "予算の揃え方: autoscilab 系は正解モデルへの問い合わせ（Experiment.call_simulator）を 20 回で打ち切る（候補の試走は数えない）。ReAct は max_iterations=20 で、反復にはコード実行だけの反復も含まれるので実験回数は 20 以下になる。両方で 1 件あたりの実験回数を mean_experiments として記録し、表に出す。",
-        "計算環境: GitHub Actions。autoscilab 2 run は ubicloud-standard-16（16 vCPU、workers 10 = 件数）、react-luna は ubicloud-standard-2（workers 16）。前研究の実測: autoscilab 系は 1 件 20 CPU 分前後、ReAct は 10 件で約 20 分。LLM は Vercel AI Gateway（openai/gpt-6-luna: $0.10 / $0.50 per M tokens）。引用判定のモデルは gpt-4.1（前研究と同じ）。",
+        "計算環境: RIKYU（Seyval の BYO Slurm、aarch64、compute_type cpu-general、1 ノード、time_limit 4 日）。1 run = 1 ジョブ、1 件 1 プロセス。autoscilab 2 run は workers 10 = 件数、react-luna は workers 16（件数が 10 なので実質 10 並列）。x86 の GitHub Actions での前研究の実測: autoscilab 系は 1 件 20 CPU 分前後、ReAct は 10 件で約 20 分。LLM は Vercel AI Gateway（openai/gpt-6-luna: $0.10 / $0.50 per M tokens）。引用判定のモデルは gpt-4.1（前研究と同じ）。",
         "マージンと予測区間: マージンは前研究と同じ（c1 0.02、c2 0.01、c3 0.02）。ただし 10 件では 1 件の STE の標準偏差 ≈ 0.27 から平均の標準誤差 ≈ 0.085、差の標準誤差 ≈ 0.12 で、マージンはこの幅より小さい。判定は規則どおり導くが、支持・反証のどちらも 10 件の差が偶然で説明できる範囲にあり得ることを paper に明記する。予測区間はそのため広く、137 件の前研究の実測を中心に ±0.1 程度の幅で置いた。",
         "run と claim の対応: c1 ← autoscilab-luna（比較対象は c3 の react-luna）、c2 ← autoscilab-nohyp-luna（比較対象は autoscilab-luna）、c3 ← react-luna（比較対象は autoscilab-luna）。3 run とも同じ 10 件。",
         "モデル: 3 run とも openai/gpt-6-luna（ユーザー指定）。論文の small（Qwen2.5-7B-Instruct）/ large（GPT-4o-mini）の非対称は再現せず、small の K=5 並列サンプルは同じ luna を temperature 1.0 で引く。",
