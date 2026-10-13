@@ -37,6 +37,25 @@
         ".research/results/autoscilab-nohyp-luna/observed.json": "7d761895fe5cba070dbe928485d3b441476d9737b974386d6eb99822415ebc47",
         ".research/results/autoscilab-nohyp-luna/tokens.json": "63c718aaa3a116a79d17b54711962309670be745988750b295669900a2537fb6"
       }
+    },
+    "react-luna": {
+      "execution_id": "e6938314-47f2-440a-97b2-ef1d6ff2a8fb",
+      "backend": "seyval",
+      "commit_hash": "9f525d4275a67b73a578fe84fe0221863195b731",
+      "overrides": {
+        "airas_secret_names": "ANTHROPIC_API_KEY,AWS_ACCESS_KEY_ID,AWS_BEARER_TOKEN_BEDROCK,AWS_SECRET_ACCESS_KEY,GEMINI_API_KEY,GH_PERSONAL_ACCESS_TOKEN,HF_TOKEN,NVIDIA_API_KEY,OPENAI_API_KEY,RIKYU_API_KEY,SEYVAL_API_KEY,VERCEL_AI_GATEWAY_API_KEY,WANDB_API_KEY",
+        "run_id": "react-luna",
+        "mode": "full"
+      },
+      "parameters": {},
+      "files": {
+        ".research/results/react-luna/eval_inputs/scigym_small.json.gz": "16a480a91826c77e4c1f1e429f8bf019331fb65f85dda3ef215c0469b058a104",
+        ".research/results/react-luna/evaluation/scigym_small.json": "ddfba11cce5ce7c757c4e7f814fc966d0787177dcd5db4abc0818bb16fc58bc2",
+        ".research/results/react-luna/instances.tar.gz": "15877596ff1227f5e96140b00b555e055660052884b0c09179481d611f964569",
+        ".research/results/react-luna/metrics.json": "40082c637522b83cca86b3650b462561f70f92b2e661caeb013a6395a06fa3be",
+        ".research/results/react-luna/observed.json": "2fc72e834ad502a3c74351cdb962c8b8a1ef512a450859d63801c15b1c4e186c",
+        ".research/results/react-luna/tokens.json": "84c3e52fbed14a0f44926660c9862985631b96eafb2b35f8a816984274e659ca"
+      }
     }
   }
 }
