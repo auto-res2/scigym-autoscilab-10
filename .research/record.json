@@ -1516,6 +1516,99 @@
             "high": 0.05,
             "basis": "137 件での前研究で ReAct の reaction_f1 は 0.3971 / 0.3443、移植は 0.4580 / 0.4558（差 −0.061 / −0.112）。構造の回復は速度則の文法に依存しない。10 件では差の標準誤差が 0.1 程度なので −0.25〜0.05 と置く。"
           }
+        },
+        {
+          "id": "c3",
+          "statement": "SciGym 公式 ReAct エージェント（react-luna）の RMS（修飾子なしの reaction_f1、等間隔に選んだ 10 件）は、autoscilab-luna より 0.02 以上低い。",
+          "rationale": "h1 の RMS の部分。STE は軌道の近さしか見ないので、反応の構造が実際に回復されているかは RMS で確かめる。react-luna はこの claim の run であると同時に c1 の比較対象でもある。",
+          "verifier": {
+            "kind": "seyval"
+          },
+          "designs": [
+            {
+              "id": "d3",
+              "summary": "SciGym 公式 Controller（max_iterations=20、eval_debug_rounds=3、temperature=1.0、max_tokens=32768）で、d1 と同じ等間隔 10 件を 1 件 1 プロセスで解かせ、提出モデルを評価層 scigym_small で採点する（採点は d1 と同じく Makefile の evaluate 段）。LLM は openai/gpt-6-luna を Vercel AI Gateway 経由で呼ぶ OpenAI 互換アダプタ（scigym.api.api.LLM のサブクラス。空の本文や文脈超過の扱いは前研究と同じ）。Controller 本体は無改変。件のプロセスの打ち切り・再試行・提出なしの規則は d1 と同じ（stall_timeout は 3600 秒）。run 後の付け替え（2026-10-13）: モデル名の宣言先を Completions.create.model から LLM.__init__.model_name に替え、OpenAI.__init__.base_url を加えた。観測フックは Completions.create を required_args のラッパとしてしか記録せず、宣言と突き合わせられなかったため。実験条件は変えておらず、run は再実行していない。",
+              "runs": [
+                {
+                  "run_id": "react-luna",
+                  "description": "SciGym 公式 ReAct エージェント、openai/gpt-6-luna、max_iterations=20",
+                  "params": {
+                    "mode": "full",
+                    "method": "react",
+                    "split": "small",
+                    "model": "openai/gpt-6-luna",
+                    "base_url": "https://ai-gateway.vercel.sh/v1",
+                    "max_iterations": 20,
+                    "eval_debug_rounds": 3,
+                    "temperature": 1,
+                    "max_tokens": 32768,
+                    "workers": 16,
+                    "instance_timeout": 14400,
+                    "stall_timeout": 3600,
+                    "n_instances": 10
+                  }
+                }
+              ],
+              "quoted_passage_ids": [
+                "s1.p1",
+                "s1.p2",
+                "s1.p3",
+                "s1.p4",
+                "s1.p11"
+              ],
+              "repository_integration": {
+                "repository_id": "s1.r1",
+                "extension_points": [
+                  "scigym.api.api.LLM"
+                ],
+                "arguments": [
+                  {
+                    "argument": "scigym.controller.Controller.__init__.max_iterations",
+                    "value": 20,
+                    "reason": "論文と同じ 20（s1.p1）。autoscilab-luna のオラクル予算 20 と揃える"
+                  },
+                  {
+                    "argument": "scigym.controller.Controller.__init__.eval_debug_rounds",
+                    "value": 3,
+                    "reason": "論文と同じ 3 回（s1.p2）"
+                  },
+                  {
+                    "argument": "scigym.controller.Controller.__init__.temperature",
+                    "value": 1,
+                    "reason": "SciGym 公式の既定値"
+                  },
+                  {
+                    "argument": "scigym.api.api.LLM.__init__.model_name",
+                    "params_key": "model",
+                    "reason": "run の yaml で指定するモデル。公式 LLM.__init__ の model_name がアダプタからそのまま OpenAI 互換 API の呼び出しに渡る。初回宣言の openai.resources.chat.completions.completions.Completions.create.model は、観測フックが create の required_args デコレータのラッパしか記録できず検証できなかったので、run 後に検証できるこの名前に付け替えた（条件は同じ openai/gpt-6-luna で、run は再実行していない）"
+                  },
+                  {
+                    "argument": "openai._client.OpenAI.__init__.base_url",
+                    "params_key": "base_url",
+                    "reason": "Vercel AI Gateway。観測フックが OpenAI.__init__ の base_url を記録するので、run 後の付け替えと同時に宣言に加えた"
+                  }
+                ]
+              }
+            }
+          ],
+          "quoted_passage_ids": [
+            "s1.p6",
+            "s1.p10",
+            "s1.p1",
+            "s1.p2"
+          ],
+          "criterion": {
+            "metric": "reaction_f1",
+            "subject": "react-luna",
+            "reference": "autoscilab-luna",
+            "op": "<=",
+            "margin": -0.02
+          },
+          "prediction": {
+            "low": -0.25,
+            "high": 0.05,
+            "basis": "137 件での前研究で ReAct の reaction_f1 は 0.3971 / 0.3443、移植は 0.4580 / 0.4558（差 −0.061 / −0.112）。構造の回復は速度則の文法に依存しない。10 件では差の標準誤差が 0.1 程度なので −0.25〜0.05 と置く。"
+          }
         }
       ],
       "tables": [
@@ -1590,7 +1683,9 @@
         "run と claim の対応: c1 ← autoscilab-luna（比較対象は c3 の react-luna）、c2 ← autoscilab-nohyp-luna（比較対象は autoscilab-luna）、c3 ← react-luna（比較対象は autoscilab-luna）。3 run とも同じ 10 件。",
         "モデル: 3 run とも openai/gpt-6-luna（ユーザー指定）。論文の small（Qwen2.5-7B-Instruct）/ large（GPT-4o-mini）の非対称は再現せず、small の K=5 並列サンプルは同じ luna を temperature 1.0 で引く。",
         "設計 ⇄ sanity の往復: 1 回目（2026-10-13、ローカル）。(a) 試走（1 件 BIOMD0000000932、予算 9、本物の LLM）: 1 反復目は small の 20 本中 17 本が有効な Antimony（3 本は種・区画への代入などで却下）、15 の異なる構造、large の本命も Antimony として有効、8 仮説をフィットして select → 実験 4 回。2 反復目は 14 本すべてが現在の最良と同じ構造になりエントロピー 0 で停止（上流の prompt が現在の仮説を見せる仕様で、small が luna なので同じ構造を返しやすい）、仮説集合が 1 つになると食い違いスコアは全点 0 で多様性だけの選択になる。これは上流の挙動なので変えない。LLM 呼び出し 37 回、111k / 97k トークン（small が luna なので前研究の llama より多い）、提出あり。(b) make run MODE=sanity（hook v3 込み）: 凍結条件 5 点の self_checks はすべて True。observed.json の extensions に SimWorker(_JsonWorker: request, close)、TrajectoryResult(OracleResult)、TrajectoryStore(ExperimentStore: summary, to_text_table)、SciGymOracle(BaseOracle: run, evaluate_law)、TrajectoryDistribution(HypothesisDistribution: compute_disagreement)、SBMLEnsembleAgent(EnsembleAgent: _sample_adaptive, sample_hypothesis_distribution) が記録され、宣言の extension_points と一致。calls に EnsembleAgent.__init__ / run_round、FalsificationSelector.__init__ / select、EnsembleClient.__init__ / complete_json_k、LLMClient.__init__、HypothesisDistribution.from_expressions / entropy、LLMMemory.add / to_prompt_str、ExperimentStore.add、_JsonWorker.request / close、Experiment.call_simulator、Simulator.run_simulation が記録された（synthesize_proposal と LLMClient.complete_json は run_round の内側の依存同士の呼び出しなので hook の対象外）。loaded_file_hashes に autoscilab の 15 モジュール。redefinitions は空（monkeypatch なし）。直した点: self_checks の numpy bool が JSON にならず SANITY_VALIDATION_SUMMARY で落ちた → bool に変換。自前コードの実測: src/ 1,225 行のうち手法の段階を実装するのは model.py 538 行 + inference.py 306 行（うち上流のサブクラスが約 200 行、Antimony の解析と canonical 化 70 行、フィットと確信度 90 行、ループ 80 行、worker 60 行、プロンプト文 25 行）。main.py 203 行、train.py 124 行（ReAct 側）、preprocess / evaluate 54 行は実行層。",
-        "設計 ⇄ sanity の往復 2 回目（2026-10-13、RIKYU、Seyval 実行 ef9340ca / 42fc6107、コミット 398342f）: autoscilab-luna は self_checks 6 条件すべて True（1 件、予算 9、実験 9 回、81k / 74k トークン、提出あり）、react-luna は PASS（実験 2 回、14k / 5k トークン）。observed.json は extensions 7 クラス、calls 142、loaded_file_hashes 37、errors なし。変えたのは実行基盤（GitHub Actions → RIKYU、Dockerfile のベースイメージの取得先を ECR Public に）と design の文言（表の見出しと c1 の根拠の 137 件 → 10 件、表のラベルと仮定に残っていた llama-3.1-8b の削除）だけで、コードは変えていない。"
+        "設計 ⇄ sanity の往復 2 回目（2026-10-13、RIKYU、Seyval 実行 ef9340ca / 42fc6107、コミット 398342f）: autoscilab-luna は self_checks 6 条件すべて True（1 件、予算 9、実験 9 回、81k / 74k トークン、提出あり）、react-luna は PASS（実験 2 回、14k / 5k トークン）。observed.json は extensions 7 クラス、calls 142、loaded_file_hashes 37、errors なし。変えたのは実行基盤（GitHub Actions → RIKYU、Dockerfile のベースイメージの取得先を ECR Public に）と design の文言（表の見出しと c1 の根拠の 137 件 → 10 件、表のラベルと仮定に残っていた llama-3.1-8b の削除）だけで、コードは変えていない。",
+        "実装レビュー（gpt-4.1、凍結後の run 結果に対して）の指摘と対応: d2 では「既定値 0 の種の初期濃度の範囲（0〜全種の既定値の中央値）」と「摂動できる種 = floating かつ非定数の種」が未宣言と指摘された。前者は d1 の summary に書いてあり d2 は d1 と同一、後者は SciGym の Simulator が変更を受け付ける種の集合をそのまま使う実行層の選択で、科学的な選択ではない。d3 では「ReAct のプロンプト本文」「API エラー時の再試行（最大 30 回）・402 での打ち切り・finish_reason=length での max_tokens 倍増」「本文が空のときの reasoning への退避」が未宣言と指摘された。プロンプトは SciGym 公式 Controller のもので無改変、残りは前研究（auto-res2/scigym-frontier-models 以降）と同じ実行層の規則で、実験条件（モデル・反復数・温度・予算）を変えない。",
+        "run 後の宣言の付け替え（c3 / d3、2026-10-13）: 観測フックが openai の Completions.create を required_args デコレータのラッパ（openai._utils._utils.required_args.<locals>.inner.<locals>.wrapper）としてしか記録しないため、初回宣言の Completions.create.model が「呼ばれていない」と判定された。モデル名は SciGym 公式の LLM.__init__(model_name) に渡っており（observed.json に 10 回、値 openai/gpt-6-luna）、宣言先をそこに付け替え、OpenAI.__init__.base_url も加えた。実験条件は変えておらず run は再実行していない。初回の宣言は record の履歴にそのまま残る。"
       ]
     }
   ]
