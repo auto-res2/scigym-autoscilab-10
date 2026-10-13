@@ -285,7 +285,7 @@
         {
           "id": "c1",
           "statement": "SciGym-small から等間隔に選んだ 10 件の平均 STE（trajectory_smape）は、LLM-AutoSciLab の部品で組んだ run（autoscilab-luna）の方が SciGym 公式 ReAct エージェント（react-luna）より 0.02 以上低い。",
-          "rationale": "h1 の中心。同じ主モデル・同じ実験予算・同じ 137 件・同じ公式 Evaluator で、手法だけを替えたときの差が STE に出れば、仮説条件付きの閉ループが SBML の機構回復にも効くという h1 の主張の直接の証拠になる。",
+          "rationale": "h1 の中心。同じ主モデル・同じ実験予算・同じ 10 件・同じ公式 Evaluator で、手法だけを替えたときの差が STE に出れば、仮説条件付きの閉ループが SBML の機構回復にも効くという h1 の主張の直接の証拠になる。",
           "verifier": {
             "kind": "seyval"
           },
@@ -722,7 +722,7 @@
       "tables": [
         {
           "key": "main",
-          "caption": "SciGym-small（137 件）での比較。STE は低いほど、RMS / NTS は高いほどよい。mean\\_experiments は 1 件あたりの正解モデルへの問い合わせ回数。",
+          "caption": "SciGym-small から等間隔に選んだ 10 件での比較。STE は低いほど、RMS / NTS は高いほどよい。mean\\_experiments は 1 件あたりの正解モデルへの問い合わせ回数。",
           "columns": [
             {
               "header": "STE $\\downarrow$",
