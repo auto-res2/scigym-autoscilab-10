@@ -1020,6 +1020,14 @@
                   },
                   "inputs_sha256": "6b3b6f97a9ba5b9398b61a971a02243f925744758f55cb7b73fc993d81fad910",
                   "model": "gpt-4.1"
+                },
+                {
+                  "commit": "9f525d4275a67b73a578fe84fe0221863195b731",
+                  "observed": {
+                    "autoscilab-luna": "4c56e6881e9f4c8395bf2cfb588d8bb30c0bf4f2bb95731345b4b1be42e3f3b8"
+                  },
+                  "inputs_sha256": "0dcfaf071e214709c7cb1525aa1bd2fc649a0ff8dc3cd5ab8192ac9670725f07",
+                  "model": "gpt-4.1"
                 }
               ]
             }
@@ -1280,6 +1288,34 @@
                       "kind": "undeclared",
                       "where": "src/model.py:73-75 System.from_incomplete",
                       "statement": "The system species candidates are determined as 'floating_only' species that are not constant, which restricts the space of possible species manipulated and targets for modeling.",
+                      "evidence": "perturbable = [s for s in incomplete.get_species_ids(floating_only=True) if not m.getSpecies(s).getConstant()]"
+                    }
+                  ]
+                },
+                {
+                  "commit": "9f525d4275a67b73a578fe84fe0221863195b731",
+                  "observed": {
+                    "autoscilab-nohyp-luna": "7d761895fe5cba070dbe928485d3b441476d9737b974386d6eb99822415ebc47"
+                  },
+                  "inputs_sha256": "c67c6179433850b3acf4ad7b62cee1199f5421fac39ce72b215128baa1e57e28",
+                  "model": "gpt-4.1",
+                  "findings": [
+                    {
+                      "kind": "undeclared",
+                      "where": "src/model.py:150 System.allowed_bounds",
+                      "statement": "Species with a default initial concentration of zero are assigned experimental bounds [0, median of positive defaults] instead of [0,0].",
+                      "evidence": "c = 0 の種は [0, 既定値の中央値]"
+                    },
+                    {
+                      "kind": "undeclared",
+                      "where": "src/preprocess.py:26 instances",
+                      "statement": "Instance selection uses spaced() to pick 10 evenly-spaced instances by id order from 137 available cases, not a random or stratified sample.",
+                      "evidence": "return spaced(found, int(n_instances)) if n_instances else found"
+                    },
+                    {
+                      "kind": "undeclared",
+                      "where": "src/model.py:143 System.from_incomplete",
+                      "statement": "Perturbable species are defined as floating and non-constant species according to SBML, not all species.",
                       "evidence": "perturbable = [s for s in incomplete.get_species_ids(floating_only=True) if not m.getSpecies(s).getConstant()]"
                     }
                   ]
@@ -1661,7 +1697,37 @@
                     "reason": "Vercel AI Gateway。観測フックが OpenAI.__init__ の base_url を記録するので、run 後の付け替えと同時に宣言に加えた"
                   }
                 ]
-              }
+              },
+              "reviews": [
+                {
+                  "commit": "9f525d4275a67b73a578fe84fe0221863195b731",
+                  "observed": {
+                    "react-luna": "2fc72e834ad502a3c74351cdb962c8b8a1ef512a450859d63801c15b1c4e186c"
+                  },
+                  "inputs_sha256": "c7ce0fa7577045601a01294c0e280ce2050ceb3baed170fad06ffc35f75dd936",
+                  "model": "gpt-4.1",
+                  "findings": [
+                    {
+                      "kind": "undeclared",
+                      "where": "src/train.py:OpenAICompatible.get_response",
+                      "statement": "最大30回のAPIエラー時のリトライ、HTTP 402で即座にrunを終了、finish_reasonがlengthのときmax_tokensを倍増、応答本文が空のときreasoningフィールドから内容を取得するという実行層のLLM呼び出しエラー規則がある。",
+                      "evidence": "for attempt in range(30): ... if exc.status_code == 402: sys.exit(BUDGET_EXCEEDED) ... if choice.finish_reason == \"length\": max_tokens = min(max_tokens * 2, 131072) ... reasoning = getattr(choice.message, \"reasoning_content\", None) or getattr(choice.message, \"reasoning\", None)"
+                    },
+                    {
+                      "kind": "undeclared",
+                      "where": "src/train.py:OpenAICompatible.get_response",
+                      "statement": "LLM応答が空だった場合、対応する処理としてreasoning内容を代替で使用する独自実装があるが、宣言ではこの分岐処理が明示されていない。",
+                      "evidence": "else: # 本文が空で...if isinstance(reasoning, str) and len(reasoning) > 0: text = reasoning; break"
+                    },
+                    {
+                      "kind": "unverified",
+                      "where": "design d3/summary",
+                      "statement": "ReActエージェントの制御プロンプト本文がSciGym公式Controllerのもので無改変とされているが、該当プロンプト内容（prompts/experiment_actions_perturb.md等）の内容や非修正の証拠が観測に直接現れていない。",
+                      "evidence": "プロンプトファイルそのものは観測/実行に現れず、ファイルパスのみ。ソース上はControllerインスタンス化時に渡されている: experiment_actions_path=\"prompts/experiment_actions_perturb.md\"等"
+                    }
+                  ]
+                }
+              ]
             }
           ],
           "quoted_passage_ids": [
