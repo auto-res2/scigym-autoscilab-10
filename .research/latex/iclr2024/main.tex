@@ -14,6 +14,11 @@
 \providecommand{\airasval}[1]{\textbf{??airasval:\detokenize{#1}??}}
 \providecommand{\unverified}[1]{#1}
 \providecommand{\airasrecordlink}[1]{#1}
+% 生成される 9 列の表が本文幅を超えるので、tabular を箱に入れて本文幅に縮める（tables/main.tex は編集しない）
+\newsavebox{\airastablebox}
+\let\airasoldtabular\tabular
+\let\endairasoldtabular\endtabular
+\newenvironment{airasfittabular}{\begin{lrbox}{\airastablebox}\begin{airasoldtabular}}{\end{airasoldtabular}\end{lrbox}\resizebox{\textwidth}{!}{\usebox{\airastablebox}}}
 
 \title{仮説条件付き実験選択は SBML の機構回復にも効くか（第 2 報）: LLM-AutoSciLab の公式モジュールを Antimony の仮説で SciGym に繋ぎ、10 件で ReAct と比べる事前登録研究}
 \author{AIRAS}
@@ -100,15 +105,48 @@ RIKYU（理研 R-CCS、aarch64）上で Seyval の BYO Slurm ジョブとして�
 
 \section{結果}
 \label{sec:results}
-（実験後に記入）
+
+3 run とも 10 件すべてが完走し、提出があった（有効提出数は表~\ref{tab:main}）。autoscilab の 2 run は全件で正解モデルへの問い合わせをちょうど 20 回使い（\airasval{autoscilab-luna.mean_experiments} 回 / 件）、ReAct は平均 \airasval{react-luna.mean_experiments} 回だった。表~\ref{tab:main} に 3 run の指標を示す。各 claim の判定は claims.tex（\S\ref{sec:hypothesis}）に記録の値から機械的に導かれている。
+
+{\let\tabular\airasfittabular\let\endtabular\endairasfittabular\input{tables/main.tex}}
+
+\paragraph{c1（STE: AutoSciLab ループ vs ReAct）.}
+平均 STE は autoscilab-luna が \airasval{autoscilab-luna.trajectory_smape}、react-luna が \airasval{react-luna.trajectory_smape} で、差は \unverified{+0.017} である。判定線（$-0.02$ 以下）には届かず、c1 は反証された。予測区間 $[-0.15, 0.05]$ には入っている。
+
+\paragraph{c2（STE: アブレーション vs AutoSciLab ループ）.}
+平均 STE は autoscilab-nohyp-luna が \airasval{autoscilab-nohyp-luna.trajectory_smape} で、autoscilab-luna より \unverified{0.011} 低かった（差 \unverified{-0.011}）。判定線（$+0.01$ 以上）に届かず、c2 は反証された。差は予測区間 $[-0.08, 0.10]$ の内側にある。仮説条件付き獲得を外しても STE は悪化せず、10 件では逆にわずかに良かった。
+
+\paragraph{c3（RMS: ReAct vs AutoSciLab ループ）.}
+修飾子なしの RMS F1 は react-luna が \airasval{react-luna.reaction_f1}、autoscilab-luna が \airasval{autoscilab-luna.reaction_f1} で、差は \unverified{-0.035} である。判定線（$-0.02$ 以下）を満たし、c3 は支持された。予測区間 $[-0.25, 0.05]$ には入っている。修飾子ありの RMS F1 と NTS F1 も表~\ref{tab:main} のとおりで、修飾子ありの RMS F1 は ReAct の方がわずかに高く、NTS F1 はループの方が高い。
+
+\paragraph{前研究との比較.}
+速度則を 3 型に固定していた前研究（137 件）では、同じ ReAct との STE の差が \unverified{+0.098} / \unverified{+0.094} だった。速度則を自由にした本研究の 10 件では差が \unverified{+0.017} で、差は 5 分の 1 以下に縮んだが符号は変わらず、ReAct を下回るには至らなかった。ただし件数も件の集合も違うので、この比較は目安にとどまる。
+
+\paragraph{計算資源.}
+入力トークンは 3 run で同程度だが（表~\ref{tab:main}）、出力トークンは ReAct に対してループが約 \unverified{12} 倍で、small モデルの K = 5 並列サンプルと適応サンプリングで Antimony ブロックを多数書くことによる。RIKYU の 1 ノード（10 件を並列）で 3 run はそれぞれ約 \unverified{31}、\unverified{58}、\unverified{81} 分で終わった。react-luna の 1 件（BIOMD0000000231）は反復 17 で 60 分間出力が止まり、stall\_timeout で打ち切ってやり直した（やり直しは約 10 分で完走）。候補 SBML の子プロセスの作り直しは autoscilab の 2 run とも 0 回だった。
 
 \section{考察}
 \label{sec:discussion}
-（実験後に記入）
+
+\paragraph{仮説条件付き獲得が効かなかった理由（c2）.}
+各件の trace から、ループの挙動を確かめた。1 件あたり 5 反復で、そのうち確信度が 0.9 を超えて Refine モードに入った反復は autoscilab-luna で平均 \unverified{2.0} 反復、アブレーションでも \unverified{2.0} 反復だった。Refine モードではスコアがブートストラップ再フィット間の分散に替わるので、仮説集合の食い違いは使われない。残る Disambiguate モードの反復でも、仮説集合が 1 構造しか持たない反復が autoscilab-luna で平均 \unverified{1.7} 反復あり（アブレーションは \unverified{2.3} 反復）、構造が 1 つなら食い違いスコアは全点 0 で、選択は多様性項だけになる。つまり、仮説条件付き獲得が実際に実験の選び方を変えたのは 5 反復のうち 1〜2 反復にとどまった。sanity で観察したとおり、上流の prompt は現在の最良仮説を見せる仕様で、small モデルが large と同じ gpt-6-luna だと同じ構造を返しやすく、エントロピーが早く 0 になる。論文が small モデルに別の、より弱いモデルを使っている（Qwen2.5-7B-Instruct \cite[s2.p4]{kabra-2026-llm}）のは、この多様性の面で効いていた可能性がある。
+
+\paragraph{フィットの質.}
+最良候補のフィット誤差（log 濃度の RMSE）が 1 を超えた件は autoscilab-luna で \unverified{4} 件、アブレーションで \unverified{4} 件あり、最終確信度が 0.9 以上だった件はどちらも \unverified{5} 件だった。速度則を自由にしても、半分の件では候補が観測を再現できておらず、提出 SBML の STE はその件で高い。前研究で主因と判断した「3 型の文法」を外しても STE が ReAct に 及ばなかったのは、文法ではなく候補の定数フィットと仮説の選び方が律速になっていることを示す。ReAct 側は 10 件中 3 件（STE \unverified{0.719}、\unverified{0.327}、\unverified{0.265}）が平均を押し上げ、残りの 7 件は 0.05 未満だった（各件の SciGym 評価より）。
+
+\paragraph{構造の回復（c3）.}
+反応構造の回復（修飾子なしの RMS F1）では前研究と同じくループが ReAct を上回り、c3 は支持された。ReAct は 1 件あたり平均 \airasval{react-luna.mean_experiments} 回しか実験せず、残りの反復をコード実行と推論に使う。ループは 20 回の実験を全件で使い切り、候補をフィットして選ぶので、反応物と生成物の組み合わせ（構造）は当たりやすい一方、定数の当て方が悪く軌道誤差（STE）では負ける、という前研究と同じ型が 10 件でも再現した。修飾子ありの RMS F1 と NTS F1 の差は小さく、修飾子（速度則にだけ現れる種）の扱いは両者とも弱い。
+
+\paragraph{統計的な力.}
+10 件での平均の差の標準誤差は 0.1 程度と見積もっており、c1・c2・c3 の差（\unverified{+0.017}、\unverified{-0.011}、\unverified{-0.035}）はいずれもこの幅の内側である。判定は規則どおり導いたが、支持・反証のどちらも偶然で説明できる範囲にあり、137 件での確認が要る。
+
+\paragraph{移植の境界.}
+3 run の observed.json は、宣言した 6 つの拡張点（EnsembleAgent、HypothesisDistribution、ExperimentStore、OracleResult、BaseOracle、\_JsonWorker）のサブクラスだけが上流を上書きし、monkeypatch（redefinitions）が無いことを記録している。上流の \texttt{run\_round} と \texttt{select} が毎反復呼ばれたことも calls に残る。ReAct 側では、宣言していた OpenAI クライアントの \texttt{Completions.create} をフックがデコレータのラッパとしてしか記録せず、モデル名の宣言先を run 後に SciGym 公式の \texttt{LLM.\_\_init\_\_} の \texttt{model\_name} に付け替えた（実験条件は同じで、run は再実行していない。記録の履歴に初回の宣言が残る）。
 
 \section{結論}
 \label{sec:conclusion}
-（実験後に記入）
+
+LLM-AutoSciLab の公式モジュールを Antimony の仮説で SciGym に繋ぎ、速度則を自由にした上で、等間隔に選んだ 10 件で SciGym 公式 ReAct と比べた。平均 STE はループが ReAct より \unverified{0.017} 高く（c1 反証）、構造の回復（RMS F1）ではループが \unverified{0.035} 上回った（c3 支持）。速度則を自由にすると STE の差は前研究の 5 分の 1 以下に縮んだが、符号は変わらなかった。 仮説条件付き獲得を外したアブレーションとの差は判定線に届かず（c2 反証）、trace からは、確信度の門と仮説の多様性の早い収束のために、食い違いスコアが実験の選び方を変えた反復が 5 反復中 1〜2 反復しかなかったことが分かった。この移植で手法の中核が働く条件を作るには、small モデルを主モデルと別にして多様性を保つか、適応サンプリングの停止則を緩める必要がある。いずれも上流の設定の範囲で試せる。
 
 \section*{データの利用可能性}
 記録は \airasrecordlink{record.json} にある。実験コード、環境の固定（Dockerfile と \texttt{uv.lock}）、各 run の結果と provenance は同じリポジトリに含まれる。
