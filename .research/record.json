@@ -1011,7 +1011,17 @@
                     "reason": "正解モデルへの問い合わせの予算。prompt の残り予算の表示に使われる"
                   }
                 ]
-              }
+              },
+              "reviews": [
+                {
+                  "commit": "9f525d4275a67b73a578fe84fe0221863195b731",
+                  "observed": {
+                    "autoscilab-luna": "4c56e6881e9f4c8395bf2cfb588d8bb30c0bf4f2bb95731345b4b1be42e3f3b8"
+                  },
+                  "inputs_sha256": "6b3b6f97a9ba5b9398b61a971a02243f925744758f55cb7b73fc993d81fad910",
+                  "model": "gpt-4.1"
+                }
+              ]
             }
           ],
           "quoted_passage_ids": [
@@ -1250,7 +1260,31 @@
                     "reason": "d1 と同じ"
                   }
                 ]
-              }
+              },
+              "reviews": [
+                {
+                  "commit": "9f525d4275a67b73a578fe84fe0221863195b731",
+                  "observed": {
+                    "autoscilab-nohyp-luna": "7d761895fe5cba070dbe928485d3b441476d9737b974386d6eb99822415ebc47"
+                  },
+                  "inputs_sha256": "0495c0afa57080b32391ddd3137e8d7b6942630b5250c7a0671d839bfe81d7ae",
+                  "model": "gpt-4.1",
+                  "findings": [
+                    {
+                      "kind": "undeclared",
+                      "where": "src/model.py:93 System.allowed_bounds",
+                      "statement": "The rule for setting allowed initial concentration bounds for all species, especially for those with zero default value, is a scientific choice affecting experimental design.",
+                      "evidence": "c = 0 の種は [0, 既定値の中央値]"
+                    },
+                    {
+                      "kind": "undeclared",
+                      "where": "src/model.py:73-75 System.from_incomplete",
+                      "statement": "The system species candidates are determined as 'floating_only' species that are not constant, which restricts the space of possible species manipulated and targets for modeling.",
+                      "evidence": "perturbable = [s for s in incomplete.get_species_ids(floating_only=True) if not m.getSpecies(s).getConstant()]"
+                    }
+                  ]
+                }
+              ]
             }
           ],
           "quoted_passage_ids": [
@@ -1411,7 +1445,55 @@
                     "reason": "run の yaml で指定するモデル"
                   }
                 ]
-              }
+              },
+              "reviews": [
+                {
+                  "commit": "9f525d4275a67b73a578fe84fe0221863195b731",
+                  "observed": {
+                    "react-luna": "2fc72e834ad502a3c74351cdb962c8b8a1ef512a450859d63801c15b1c4e186c"
+                  },
+                  "inputs_sha256": "9eac5f586bd181fdcb68f002967de484f765ac016a2bcdcf1fceb56b30157526",
+                  "model": "gpt-4.1",
+                  "findings": [
+                    {
+                      "kind": "undeclared",
+                      "where": "src/train.py:45 OpenAICompatible.initialize",
+                      "statement": "Promptやシステムプロンプトの内容・論旨は成果記録や設計書に具体的に宣言されていない。",
+                      "evidence": "self.messages = [{\"role\": \"system\", \"content\": self.system_prompt}]"
+                    },
+                    {
+                      "kind": "undeclared",
+                      "where": "src/train.py:70-84 OpenAICompatible.get_response",
+                      "statement": "エラー時やコンテキスト長超過時の挙動（リトライ最大29回、エラーコード402や400時の早期終了、完了理由 length 時の max_tokens 倍増など）が宣言されていない。",
+                      "evidence": "for attempt in range(30): ... if exc.status_code == 402: sys.exit(BUDGET_EXCEEDED) ... if choice.finish_reason == \"length\": max_tokens = min(max_tokens * 2, 131072)"
+                    },
+                    {
+                      "kind": "undeclared",
+                      "where": "src/train.py:70-84 OpenAICompatible.get_response",
+                      "statement": "assistantメッセージが空な場合にreasoningフィールドへフォールバックする処理が宣言に無い。",
+                      "evidence": "if choice.finish_reason != \"length\" ... reasoning = getattr(choice.message, \"reasoning_content\", None) or getattr(choice.message, \"reasoning\", None) ... if isinstance(reasoning, str) ... text = reasoning"
+                    },
+                    {
+                      "kind": "undeclared",
+                      "where": "src/train.py:45 OpenAICompatible.initialize",
+                      "statement": "OpenAI互換クライアントのtimeout（1800秒）, max_retries（1回）, base_url利用設定が記録の設計パラメータ欄にはない。",
+                      "evidence": "OpenAI(\n    api_key=os.environ[...], base_url=..., max_retries=1, timeout=1800\n)"
+                    },
+                    {
+                      "kind": "undeclared",
+                      "where": "src/train.py:126 main tokens.json 書き込み",
+                      "statement": "API呼び出しのトークンカウント方式（OpenAI SDKの usage 準拠）が宣言のどこにも記載されていない。",
+                      "evidence": "llm.input_total_tokens, llm.output_total_tokens（OpenAI のusage）"
+                    },
+                    {
+                      "kind": "undeclared",
+                      "where": "src/train.py:126 main tokens.json 書き込み",
+                      "statement": "n_experimentsに「成功した実験のみをカウント」(successなリクエストのみ)の定義が設計記述なし。",
+                      "evidence": "\"n_experiments\": sum(1 for v in controller.experiment_request_history.values() if v.get(\"success\"))"
+                    }
+                  ]
+                }
+              ]
             }
           ],
           "quoted_passage_ids": [
