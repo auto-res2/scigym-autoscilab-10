@@ -99,6 +99,11 @@
               "text_sha256": "db5676a7771f2fa83f8119b174db378395939f25340f02390f518072f6ee9b8c",
               "model": "gpt-4.1",
               "supported": true
+            },
+            {
+              "text_sha256": "bd0f529e6932c426c92c79e37e196cf24769d00212f4ca13e5b0bf1242ddf504",
+              "model": "gpt-4.1",
+              "supported": true
             }
           ]
         },
@@ -190,6 +195,11 @@
               "model": "gpt-4.1",
               "supported": false,
               "reason": "The citing text describes the role and interface of 'Experiment.call_simulator' and its usage as the exclusive query to the true model, but the passage only defines the function signature with no explanation or behavior details."
+            },
+            {
+              "text_sha256": "bd0f529e6932c426c92c79e37e196cf24769d00212f4ca13e5b0bf1242ddf504",
+              "model": "gpt-4.1",
+              "supported": true
             }
           ]
         }
@@ -349,6 +359,11 @@
               "text_sha256": "192658a0761b9fee5b7081f41ebe4cd9200720f08ef681cd186f532d72aff404",
               "model": "gpt-4.1",
               "supported": true
+            },
+            {
+              "text_sha256": "5f17e3e95b9670c05019c1dea49d0340ac969337c7af2c7615c33efe9110f3bd",
+              "model": "gpt-4.1",
+              "supported": true
             }
           ]
         },
@@ -364,6 +379,11 @@
             },
             {
               "text_sha256": "6fa21607afb1e5973a322687688ff9aea03f725f4867dfc114b90c5b58a54600",
+              "model": "gpt-4.1",
+              "supported": true
+            },
+            {
+              "text_sha256": "ba040144323f3c172499dda8b8f13ad55dbf48948a8ed9d549286a378871ec8c",
               "model": "gpt-4.1",
               "supported": true
             }
@@ -386,6 +406,11 @@
             },
             {
               "text_sha256": "18aef6a125632eebeca1107ebf1f9f00eff414cc9bd880ab078e300757c1944f",
+              "model": "gpt-4.1",
+              "supported": true
+            },
+            {
+              "text_sha256": "294a719177e02c1cc45375f1d50202ee1abe68e36cafcaacca977086b3cd1188",
               "model": "gpt-4.1",
               "supported": true
             }
@@ -420,6 +445,11 @@
             },
             {
               "text_sha256": "2c105a3d865c5faa4fcae0d6d3212fa7ae69690c71d5d6ab9171ff2ab958b8b4",
+              "model": "gpt-4.1",
+              "supported": true
+            },
+            {
+              "text_sha256": "383cbb20f9b476c87e5b92b1c4fca16dcfe64f20e570f72f258dc3bf0c752a60",
               "model": "gpt-4.1",
               "supported": true
             }
@@ -517,6 +547,11 @@
               "text_sha256": "d89f006c25ace58388ec0fcfd85791687916af9e10b65e5cb0f86ca003f99de0",
               "model": "gpt-4.1",
               "supported": true
+            },
+            {
+              "text_sha256": "1663a4b537700aa8c7c5a027ddd99abafb91da34c6f8d338a378ec387b5f9538",
+              "model": "gpt-4.1",
+              "supported": true
             }
           ]
         },
@@ -527,6 +562,11 @@
           "judgments": [
             {
               "text_sha256": "63df8f4cc13182b0e59894d50f1853eec6f0c6743c184f6a861b99c6bd1f5475",
+              "model": "gpt-4.1",
+              "supported": true
+            },
+            {
+              "text_sha256": "d05046979edd45c2729899ab4b39ec8d6a40ecbf5a39247fbb5e49606ac89b71",
               "model": "gpt-4.1",
               "supported": true
             }
@@ -544,6 +584,11 @@
             },
             {
               "text_sha256": "fdee55e513c95b3a8fdd6df130e90ddbee9178b4dad77bdf31d74e0f0a617e57",
+              "model": "gpt-4.1",
+              "supported": true
+            },
+            {
+              "text_sha256": "4a3a794f8ab6f586703cf4eed893dc02d183e292fb13a93141d87a9a44ea62af",
               "model": "gpt-4.1",
               "supported": true
             }
@@ -569,6 +614,16 @@
               "model": "gpt-4.1",
               "supported": false,
               "reason": "The citing text claims that '仮説を Python 式として選別する上流の処理' uses Antimony, which the quoted passage does not mention; it only shows filtering invalid hypotheses, not selection in Python or the use/non-use of Antimony."
+            },
+            {
+              "text_sha256": "56265008ac6727146a7eb1a6bbf6d3fedc90fb4bd29143abcc8ca4be5a23c52d",
+              "model": "gpt-4.1",
+              "supported": true
+            },
+            {
+              "text_sha256": "b3c045910729306da1093b3e3e5afe85a23bbcf41b06e24539958ba39409aa1c",
+              "model": "gpt-4.1",
+              "supported": true
             }
           ]
         },
@@ -581,6 +636,11 @@
               "text_sha256": "5664ca0bf09991450a9adda3f4bc7d5ca9c224db25d392c19f0f4c8464bfb141",
               "model": "gpt-4.1",
               "supported": true
+            },
+            {
+              "text_sha256": "2537f5dad34fe40dc06912236adf81cab945df8c95da8de3b5f7f3caabc5f047",
+              "model": "gpt-4.1",
+              "supported": true
             }
           ]
         },
@@ -591,6 +651,11 @@
           "judgments": [
             {
               "text_sha256": "5664ca0bf09991450a9adda3f4bc7d5ca9c224db25d392c19f0f4c8464bfb141",
+              "model": "gpt-4.1",
+              "supported": true
+            },
+            {
+              "text_sha256": "2537f5dad34fe40dc06912236adf81cab945df8c95da8de3b5f7f3caabc5f047",
               "model": "gpt-4.1",
               "supported": true
             }
@@ -606,6 +671,11 @@
               "model": "gpt-4.1",
               "supported": false,
               "reason": "The citing text attributes adding a timeout to the referenced code, but the quoted passage and its context show no timeout mechanism implemented (only reading from stdout)."
+            },
+            {
+              "text_sha256": "5316feca2a83637f0aa1d51685d4a2642a414c2b4a3ac4dc179a6fb5b515896e",
+              "model": "gpt-4.1",
+              "supported": true
             }
           ]
         },
@@ -666,6 +736,12 @@
               "text_sha256": "66e020083c8c1faba42eb6fe29a3baad06efe350e3c067f595f11e25b0eccb74",
               "model": "gpt-4.1",
               "supported": true
+            },
+            {
+              "text_sha256": "0c8fda87bb9f7d7ebc9c008bf18f00f9acb952f013551519d452e6d206df1f1a",
+              "model": "gpt-4.1",
+              "supported": true,
+              "reason": "The citing text refers to 'synthesize_proposal' as part of the official modules corresponding to the large model synthesis, which matches the quoted passage's definition and docstring context."
             }
           ]
         }
